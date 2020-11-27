@@ -1,7 +1,7 @@
 <template>
     <b-navbar>   
         <template slot="brand"> 
-            <router-link to="/">
+            <router-link :to="{name: 'Index'}">
                 <img class="resize" alt="logo" src="../assets/logo.png">         
             </router-link>
         </template>

@@ -1,28 +1,17 @@
-import Vue from 'vue'
-import App from './App.vue'
-import Buefy from 'buefy'
-import 'buefy/dist/buefy.css'
-import VueRouter from 'vue-router'
+import Vue from 'vue';
+import App from './App.vue';
+import Buefy from 'buefy';
+import 'buefy/dist/buefy.css';
+import VueRouter from 'vue-router';
 
-import Index from './components/Index.vue'
-import AddSubject from './components/AddSubject.vue'
+import routes from "./router"
 
 Vue.use(Buefy)
 Vue.use(VueRouter)
 
-const routes = [
-  {
-    path: "/",
-    component: Index
-  },
-  {
-    path: "/AddSubject",
-    component: AddSubject
-  }
-];
-
 const router = new VueRouter({
-  routes
+  routes,
+  mode: 'history'
 });
 
 

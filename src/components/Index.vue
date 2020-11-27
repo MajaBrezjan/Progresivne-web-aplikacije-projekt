@@ -6,21 +6,23 @@
     </div>
     
     <div class="add">
-        <router-link to="/AddSubject">
+        <router-link :to="{ name: 'AddSubject' }">
            <b-button type="is-dark" >ADD SUBJECT</b-button>
-         </router-link>
+        </router-link>
     </div>
     <div class="container">
         <div class="card" v-for="subject in subjects" :key="subject.id">
             <div class="card-content"> 
-                <h2 class="indigo-text">{{subject.name}}</h2>
+                <h2 class="indigo-text">{{subject.title}}</h2>
                 <ul class="task">
-                    <li v-for="(task,index) in subject.task" :key="index">
+                    <li v-for="(task,index) in subject.tasks" :key="index">
                         <p>{{task}}</p>
                     </li>
                 </ul>
                 <div class="icons">
-                    <i class="material-icons">edit</i>
+                    <router-link :to="{ name: 'EditSubject', params: {subject_slug: subject.slug}}">
+                        <i class="material-icons">edit</i>
+                    </router-link>
                     <i class="material-icons" @click="deleteSubject(subject.id)">delete</i>
                 </div>
             </div>
@@ -30,23 +32,40 @@
 </template>
 
 <script>
+
+import db from './firebaseinit'
+
 export default {
     data(){
         return{
             subjects:[
-                {name:'Progressive Web App', task:['vue projekt'], id:1},
-                {name:'Razvoj računalnih igara', task:['ispit iz teorije', 'projekt-igrica'], id:2},
-                 {name:'Upravljanje bojama', task:['2kolokvija', 'prezentacija','usmeni'], id:3}
+
             ]
         }       
     },
     methods:{
         deleteSubject(id){
-            this.subjects = this.subjects.filter(subject => {
+            //delete document form firestore
+            db.collection('subjects').doc(id).delete()
+            .then(() => {
+                this.subjects = this.subjects.filter(subject => {
                 return subject.id != id
             })
+            })    
         }
+    },
+    created(){
+        //fetch data from the firestore
+        db.collection('subjects').get()
+        .then(snapshot => {
+            snapshot.forEach(doc => {
+                let subject =doc.data()
+                subject.id = doc.id
+                this.subjects.push(subject)
+            })
+        })
     }
+
 }
 </script>
 

@@ -1,7 +1,7 @@
 <template>
   <div class="add-subject container">
-    <h2 class="center-align indigo-text"> ADD NEW SUBJECT </h2>
-    <form>
+    <h2 class="center-align indigo-text"> Add New Subject </h2>
+    <form @submit.prevent="AddSubject">
         <div class="field title">
             <label for="title">Subject Title:</label>
             <input type="text" name="title" v-model="title">
@@ -12,19 +12,23 @@
             <i class="material-icons delete" @click="deleteTask(ta)">delete</i>
         </div>
         <div class="field add-task">
-            <label for="add-task">Add a task:</label>
-            <input type="text" name="add-task" @keydown.enter="addTask" v-model="another">
+            <label for="add-task">Add a task: </label>
+            <input type="text" name="add-task"  placeholder="Press tab to add a task or add more tasks" @keydown.tab.prevent="addTask" v-model="another">
         </div>
         <div class="field center-align">
             <p v-if="feedback">{{feedback}}</p>
             <br>
-            <b-button type="is-dark" >ADD SUBJECT</b-button>
+            <button class="btn black">Add Subject</button>
         </div>
     </form>
   </div>
 </template>
 
 <script>
+
+import db from './firebaseinit'
+import slugify from 'slugify'
+
 export default {
     name: 'AddSubject',
     data(){
@@ -32,10 +36,33 @@ export default {
           title:null,
           another: null,
           tasks: [],
-          feedback:null
+          feedback:null,
+          slug: null
         }
     },
     methods:{
+        AddSubject(){
+            if(this.title){
+                this.feedback = null
+                //create a slug
+                this.slug = slugify(this.title, {
+                    replacment:'-',
+                    remove: /[$*_+~.()'"!\-:@]/g,
+                    lower: true
+                })
+                db.collection('subjects').add({
+                    title: this.title,
+                    tasks: this.tasks,
+                    slug: this.slug
+                }).then(() => {
+                    this.$router.push({ name: 'Index'})
+                }).catch(err => {
+                    console.log(err)
+                })
+            }else{
+               this.feedback = 'You must enter a subject title'
+            }
+        },
         addTask(){
             if(this.another){
                 this.tasks.push(this.another)
@@ -72,5 +99,6 @@ export default {
 .add-subject .delete{
     position:absolute;
     right:20px;
+    cursor:pointer;
 }
 </style>

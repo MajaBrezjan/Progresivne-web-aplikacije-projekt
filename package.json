@@ -10,6 +10,8 @@
   "dependencies": {
     "buefy": "^0.9.3",
     "core-js": "^3.6.5",
+    "firebase": "^8.1.1",
+    "slugify": "^1.4.6",
     "vue": "^2.6.11",
     "vue-router": "^3.4.9",
     "vuex": "^3.4.0"
